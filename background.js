@@ -1,5 +1,5 @@
 // 后台 service worker。
-// 关键改动：MV3 的 contextMenus 菜单项不跨浏览器会话持久化，
+// 关键点：MV3 的 contextMenus 菜单项不跨浏览器会话持久化，
 // 所以每次 SW 启动都重新注册，而不是只写在 onInstalled 里。
 
 importScripts('common.js');
@@ -8,8 +8,12 @@ function createMenus() {
   chrome.contextMenus.removeAll(() => {
     const report = { ts: Date.now(), version: chrome.runtime.getManifest().version, items: [] };
     const wanted = [
-      { id: MENU_TAB, contexts: ['tab'] },   // 标签页右键（Chromium 155 起默认支持，见 README）
-      { id: MENU_PAGE, contexts: ['page'] }  // 页面右键：肯定会出现，位置在「查看页面源代码/检查」上方
+      // 右键工具栏那个红色图标 → 这一项出现在该小菜单的最上方（扩展 action 的项排在原生项之前）。
+      { id: MENU_ACTION, contexts: ['action'] },
+      // 右键标签页 → 位置由 Chromium 固定在「关闭」分组上方，不能改（见 README）。
+      { id: MENU_TAB, contexts: ['tab'] },
+      // 右键页面 → 位置在「查看页面源代码 / 检查」上方。
+      { id: MENU_PAGE, contexts: ['page'] }
     ];
     let pending = wanted.length;
     const done = () => {
@@ -36,7 +40,7 @@ chrome.runtime.onInstalled.addListener(createMenus);
 chrome.runtime.onStartup.addListener(createMenus);
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === MENU_TAB || info.menuItemId === MENU_PAGE) {
+  if (info.menuItemId === MENU_ACTION || info.menuItemId === MENU_TAB || info.menuItemId === MENU_PAGE) {
     ctrCloseRightOf(tab);
   }
 });
