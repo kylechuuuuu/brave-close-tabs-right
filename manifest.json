@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "关闭右侧标签页",
+  "version": "1.1.0",
+  "description": "在标签页右键菜单和页面右键菜单里提供「关闭右侧标签页」，并带图标面板与快捷键。",
+  "permissions": ["contextMenus", "tabs", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "关闭右侧标签页",
+    "default_popup": "popup.html"
+  },
+  "commands": {
+    "close-tabs-right": {
+      "suggested_key": {
+        "default": "Alt+Shift+Right"
+      },
+      "description": "关闭右侧标签页"
+    },
+    "close-other-tabs": {
+      "suggested_key": {
+        "default": "Alt+Shift+O"
+      },
+      "description": "关闭其他标签页"
+    }
+  },
+  "minimum_chrome_version": "120"
+}
